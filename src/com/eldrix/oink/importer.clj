@@ -10,15 +10,15 @@
   "An ordered catalogue of interesting LOINC file types."
   [{:path ["LoincTable" "Loinc.csv"]
     :type :org.loinc/table}
- ;  {:path ["LoincTable" "SourceOrganization.csv"]
- ;   :type :org.loinc/source-organization}
- ;  {:path ["LoincTable" "MapTo.csv"]
- ;   :type :org.loinc/map-to}
- ;  {:path ["AccessoryFiles" "MultiAxialHierarchy" "MultiAxialHierarchy.csv"]
- ;   :type :org.loinc/multiaxial-hierarchy}
- ;  {:path ["AccessoryFiles" "DocumentOntology" "DocumentOntology.csv"]
- ;   :type :org.loinc/document-ontology}
-    ])
+   ;  {:path ["LoincTable" "SourceOrganization.csv"]
+   ;   :type :org.loinc/source-organization}
+   {:path ["LoincTable" "MapTo.csv"]
+    :type :org.loinc/map-to}
+   ;  {:path ["AccessoryFiles" "MultiAxialHierarchy" "MultiAxialHierarchy.csv"]
+   ;   :type :org.loinc/multiaxial-hierarchy}
+   ;  {:path ["AccessoryFiles" "DocumentOntology" "DocumentOntology.csv"]
+   ;   :type :org.loinc/document-ontology}
+   ])
 
 (defn- examine-file
   [^File f]
@@ -66,10 +66,11 @@
 (defn stream
   "Blocking; stream LOINC data from the directory 'dir' to the core.async
   channel 'ch'."
-  [dir ch & {:keys [batch-size close?] :or {batch-size 500 close? true}}]
-  (let [files (list-files dir)]
-    (log/info "Processing files from `" dir "`:" (count files) " files found")
-    (doseq [loinc-file files]
+  [dir ch & {:keys [batch-size close? types] :or {batch-size 500 close? true}}]
+  (let [files (list-files dir)
+        files' (if types (filter #(types (:type %)) files))]
+    (log/info "Processing files from `" dir "`:" (count files) " files found" (when types (str ", " (count files') " to be processed.")))
+    (doseq [loinc-file files']
       (stream-csv (:file loinc-file) ch batch-size))
     (when close? (async/close! ch))))
 
