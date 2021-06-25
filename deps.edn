@@ -11,7 +11,6 @@
                                              :sha     "43100b2b2a8b2aa0f3885e21dda425c669aff596"}
 
            datalevin/datalevin              {:mvn/version "0.4.39"}
-           datascript/datascript            {:mvn/version "1.2.1"}
            org.apache.lucene/lucene-core    {:mvn/version "8.9.0"}
            org.apache.lucene/lucene-queries {:mvn/version "8.9.0"}
 
