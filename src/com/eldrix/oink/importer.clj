@@ -23,9 +23,9 @@
    {:path ["AccessoryFiles" "PartFile" "PartRelatedCodeMapping.csv"]
     :type :org.loinc.part.code-mapping}
    {:path ["AccessoryFiles" "PartFile" "LoincPartLink_Primary.csv"]
-    :type :org.loinc.part.link-primary}
+    :type :org.loinc.part.link}
    {:path ["AccessoryFiles" "PartFile" "LoincPartLink_Supplementary.csv"]
-    :type :org.loinc.part.link-supplementary}
+    :type :org.loinc.part.link}
    {:path ["AccessoryFiles" "PanelsAndForms" "PanelsAndForms.csv"]
     :type :org.loinc.panels-and-forms}])
 

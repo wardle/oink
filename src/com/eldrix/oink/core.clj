@@ -163,10 +163,22 @@
    (d/q '[:find [(pull ?e pattern) ...]
           :in $ ?loinc-code pattern
           :where
-          [?e :org.loinc.part.link-primary/LoincNumber ?loinc-code]]
+          [?e :org.loinc.part.link/LoincNumber ?loinc-code]]
         (d/db conn)
         loinc-code
         pattern)))
+
+(defn fetch-part-from-links
+  ([conn part-number]
+   (fetch-part-from-links conn part-number '[*]))
+  ([conn part-number pattern]
+  (d/q '[:find [(pull ?e pattern) ...]
+         :in $ ?part-number pattern
+         :where
+         [?e :org.loinc.part.link/PartNumber ?part-number]]
+       (d/db conn)
+       part-number
+       pattern)))
 
 
 (comment
@@ -229,6 +241,8 @@
   (fetch-loinc st "10005-7")
   (fetch-part st "LP101394-7")
   (fetch-part st "LP393878-6")
+  (fetch-part-from-links st "LP393878-6")
+  (fetch-part st "LP100041-5")
   (fetch-part-code-mapping st "LP100006-8")
   (snomed->loinc-parts st 708299006)
   (loinc-part->snomed st "LP100006-8")
@@ -236,6 +250,8 @@
   (fetch-loinc st "2951-2")
   (time (loinc->parts st "2951-2"))
   (time (loinc->parts st "5778-6"))
-  (map :org.loinc.part.link-primary/PartName (loinc->parts st "5778-6"))
+  (map :org.loinc.part.link/PartName (loinc->parts st "5778-6"))
   (d/close st)
+
+
   )
