@@ -15,9 +15,19 @@
    {:path ["LoincTable" "MapTo.csv"]
     :type :org.loinc.map-to}
    {:path ["AccessoryFiles" "MultiAxialHierarchy" "MultiAxialHierarchy.csv"]
-      :type :org.loinc.multiaxial-hierarchy}
+    :type :org.loinc.multiaxial-hierarchy}
    {:path ["AccessoryFiles" "DocumentOntology" "DocumentOntology.csv"]
-      :type :org.loinc.document-ontology}])
+    :type :org.loinc.document-ontology}
+   {:path ["AccessoryFiles" "PartFile" "Part.csv"]
+    :type :org.loinc.part}
+   {:path ["AccessoryFiles" "PartFile" "PartRelatedCodeMapping.csv"]
+    :type :org.loinc.part.code-mapping}
+   {:path ["AccessoryFiles" "PartFile" "LoincPartLink_Primary.csv"]
+    :type :org.loinc.part.link-primary}
+   {:path ["AccessoryFiles" "PartFile" "LoincPartLink_Supplementary.csv"]
+    :type :org.loinc.part.link-supplementary}
+   {:path ["AccessoryFiles" "PanelsAndForms" "PanelsAndForms.csv"]
+    :type :org.loinc.panels-and-forms}])
 
 (defn- examine-file
   [^File f]

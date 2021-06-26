@@ -158,5 +158,7 @@
   (fetch-multiaxial-hierarchy st 	"LP7833-9")
   (fetch-multiaxial-hierarchy st 	"LP7803-2")
   (fetch-multiaxial-hierarchy st "LP29693-6")
+
+  (fetch-loinc st "10005-7")
   (d/close st)
   )
