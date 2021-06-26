@@ -7,7 +7,9 @@
   adaptability although there would be opportunity for pre-computations should
   optimisation for performance be required.
 
-  In essence, the tables are stored as-is, albeit with namespaced keys."
+  In essence, the tables are stored as-is, albeit with namespaced keys. We
+  join them up in interesting ways at the time of query in order to generate a
+  searchable index."
   (:require [clojure.core.async :as async]
             [com.eldrix.oink.importer :as importer]
             [datalevin.core :as d]
@@ -19,7 +21,9 @@
    :org.loinc.map-to/LOINC                     {:db/valueType :db.type/string}
    :org.loinc.multiaxial-hierarchy/CODE        {:db/valueType :db.type/string}
    :org.loinc/EXTERNAL_COPYRIGHT_LINK          {:db/valueType :db.type/string}
-   :org.loinc.source-organization/COPYRIGHT_ID {:db/valueType :db.type/string}})
+   :org.loinc.source-organization/COPYRIGHT_ID {:db/valueType :db.type/string}
+   :org.loinc.part/PartNumber                  {:db/valueType :db.type/string}
+   })
 
 (defn import-batch
   [conn {:keys [type data] :as batch}]
@@ -102,10 +106,62 @@
        (d/db conn)
        copyright-id))
 
+(defn fetch-part
+  ([conn part-number]
+   (fetch-part conn part-number '[*]))
+  ([conn part-number pattern]
+   (d/q '[:find (pull ?e pattern) .
+          :in $ ?part-number pattern
+          :where
+          [?e :org.loinc.part/PartNumber ?part-number]]
+        (d/db conn)
+        part-number
+        pattern)))
+
+(defn fetch-part-code-mapping
+  ([conn part-number]
+   (fetch-part-code-mapping conn part-number '[*]))
+  ([conn part-number pattern]
+   (d/q '[:find (pull ?e pattern) .
+          :in $ ?part-number pattern
+          :where
+          [?e :org.loinc.part.code-mapping/PartNumber ?part-number]]
+        (d/db conn)
+        part-number
+        pattern)))
+
+(defn snomed->loinc-parts
+  ([conn sctid]
+   (snomed->loinc-parts conn sctid '[*]))
+  ([conn sctid pattern]
+   (d/q '[:find (pull ?e pattern)
+          :in $ ?sctid pattern
+          :where
+          [?e :org.loinc.part.code-mapping/ExtCodeId ?sctid]
+          [?e :org.loinc.part.code-mapping/ExtCodeSystem "http://snomed.info/sct"]]
+        (d/db conn)
+        (str sctid)
+        pattern)))
+
+(defn loinc-part->snomed
+  ([conn part-number]
+   (loinc-part->snomed conn part-number '[*]))
+  ([conn part-number pattern]
+   (d/q '[:find (pull ?e pattern)
+          :in $ ?part-number pattern
+          :where
+          [?e :org.loinc.part.code-mapping/PartNumber ?part-number]
+          [?e :org.loinc.part.code-mapping/ExtCodeSystem "http://snomed.info/sct"]]
+        (d/db conn)
+        part-number
+        pattern)))
+
+
+
 (comment
 
   (def st (d/create-conn "/tmp/oink1" schema))
-  (import-dir st "/Users/mark/Downloads/Loinc_2.70")
+  (import-dir st "/home/mark/Downloads/Loinc_2.70")
   (d/close st)
   (def ch (async/chan))
   (async/thread (importer/stream "/Users/mark/Downloads/Loinc_2.70" ch :batch-size 10 :types #{:org.loinc}))
@@ -142,7 +198,7 @@
          [_ :org.loinc/CLASS ?class]]
        (d/db st))
 
-  (with-copyright st "Pfizer")
+  (time (with-copyright st "Pfizer"))
   (fetch-source-organization st "69723-5")
   (with-copyright st "WHO_HIV")
   (fetch-source-organization st "45247-4")
@@ -150,15 +206,20 @@
   (fetch-multiaxial-hierarchy st "LP373671-9")
   (fetch-multiaxial-hierarchy st "LP14082-9")
 
-  (fetch-multiaxial-hierarchy st 	"57021-8")
-  (fetch-loinc st 	"57021-8")
+  (fetch-multiaxial-hierarchy st "57021-8")
+  (time (fetch-loinc st "57021-8"))
 
-  (fetch-multiaxial-hierarchy st 	"LP393878-6")
-  (fetch-multiaxial-hierarchy st 	"LP96800-5")
-  (fetch-multiaxial-hierarchy st 	"LP7833-9")
-  (fetch-multiaxial-hierarchy st 	"LP7803-2")
+  (fetch-multiaxial-hierarchy st "LP393878-6")
+  (fetch-multiaxial-hierarchy st "LP96800-5")
+  (fetch-multiaxial-hierarchy st "LP7833-9")
+  (fetch-multiaxial-hierarchy st "LP7803-2")
   (fetch-multiaxial-hierarchy st "LP29693-6")
 
   (fetch-loinc st "10005-7")
+  (fetch-part st "LP101394-7")
+  (fetch-part st "LP393878-6")
+  (fetch-part-code-mapping st "LP100006-8")
+  (snomed->loinc-parts st 708299006)
+  (loinc-part->snomed st "LP100006-8")
   (d/close st)
   )
