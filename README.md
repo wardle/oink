@@ -41,9 +41,9 @@ To help you get started, here is an introduction to the important namespaces.
 
 ### `com.eldrix.oink.importer`
 
-Provides fast, asynchronous streaming of the LOINC CSV data using clojure's
-core.async library. Data are read, turned into batches of CSV data and sent
-on a channel with the type derived from the filename. 
+Provides streaming of the LOINC CSV data using clojure's core.async library. 
+Data are read, turned into batches of CSV data and sent on a channel with the 
+type derived from the filename. 
 
 ### `com.eldrix.oink.core`
 
@@ -57,6 +57,11 @@ access and to build a more optimised index for search.
 
 This will provide a Lucene-backed search index, permitting search of LOINC
 entities via a range of different facets. 
+
+### `com.eldrix.oink.graph`
+
+This will provide a graph-based API to LOINC data, including resolution of 
+LOINC part components to alternative terminologies such as SNOMED CT.
 
 ### List outdated dependencies
 
