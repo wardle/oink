@@ -2,7 +2,7 @@
 
 A library and microservice for LOINC .
 
-> *Status* : in development; at the REPL can import and build a file-backed
+> *Status* : in *very early* development; at the REPL can import and build a file-backed
 database and provide a rudimentary API for LOINC data.
 
 LOINC is an international standard for health measurements, observations and 
