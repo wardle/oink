@@ -13,7 +13,8 @@
   (:require [clojure.core.async :as async]
             [com.eldrix.oink.importer :as importer]
             [datalevin.core :as d]
-            [clojure.tools.logging.readable :as log]))
+            [clojure.tools.logging.readable :as log]
+            [clojure.string :as str]))
 
 (def schema
   {:org.loinc/LOINC_NUM                        {:db/unique    :db.unique/identity
@@ -118,6 +119,7 @@
         part-number
         pattern)))
 
+
 (defn fetch-part-code-mapping
   ([conn part-number]
    (fetch-part-code-mapping conn part-number '[*]))
@@ -147,7 +149,7 @@
   ([conn part-number]
    (loinc-part->snomed conn part-number '[*]))
   ([conn part-number pattern]
-   (d/q '[:find (pull ?e pattern)
+   (d/q '[:find (pull ?e pattern) .
           :in $ ?part-number pattern
           :where
           [?e :org.loinc.part.code-mapping/PartNumber ?part-number]
@@ -180,11 +182,26 @@
        part-number
        pattern)))
 
+(defn all-classes
+  "Return all classes in the LOINC dataset."
+  [conn]
+  (d/q '[:find [?class ...]
+         :where
+         [_ :org.loinc/CLASS ?class]]
+       (d/db conn)))
+
+(defn all-loinc-numbers
+  [conn]
+  (d/q '[:find [?loinc-number ...]
+         :where
+         [_ :org.loinc/LOINC_NUM ?loinc-number]]
+       (d/db conn)))
 
 (comment
-
   (def st (d/create-conn "/tmp/oink1" schema))
-  (import-dir st "/home/mark/Downloads/Loinc_2.70")
+  (import-dir st "/Users/mark/Downloads/Loinc_2.70")
+  (count (all-loinc-numbers st))
+  (importer/list-files "/Users/mark/Downloads/Loinc_2.70")
   (d/close st)
   (def ch (async/chan))
   (async/thread (importer/stream "/Users/mark/Downloads/Loinc_2.70" ch :batch-size 10 :types #{:org.loinc}))
@@ -253,5 +270,26 @@
   (map :org.loinc.part.link/PartName (loinc->parts st "5778-6"))
   (d/close st)
 
+  (loinc->parts st "21756-2")
+  (fetch-loinc st "21756-2")
+  (fetch-loinc st "21762-0")
+  (->> (loinc->parts st "21756-2")
+       (map :org.loinc.part.link-primary/PartNumber)
+       (map #(loinc-part->snomed st %))
+       (map :org.loinc.part.code-mapping/ExtCodeId))
 
+  (->> (fetch-multiaxial-hierarchy st "21756-2")
+       (map :org.loinc.multiaxial-hierarchy/PATH_TO_ROOT)
+       (map #(clojure.string/split % #"\."))
+       flatten
+       set
+       (map #(fetch-part st %))
+       (map :org.loinc.part/PartDisplayName)
+       sort)
+  (clojure.string/split
+    (:org.loinc/RELATEDNAMES2 (fetch-loinc st "21756-2"))
+    #"; ")
+
+
+  (fetch-part st "LP409272-4")
   )
