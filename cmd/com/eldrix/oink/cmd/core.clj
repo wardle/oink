@@ -11,7 +11,8 @@
 (defn import-from [{:keys [db]} args]
   (if db
     (let [import-dir (if (= 0 (count args)) "." (first args))]
-      (oink/import-dir (oink/open db) import-dir))
+      (with-open [svc (oink/open db)]
+        (oink/import-dir svc import-dir)))
     (log/error "no database directory specified")))
 
 (defn list-from [_ args]
@@ -22,8 +23,8 @@
 
 (defn status [{:keys [db]} _]
   (if db
-    (with-open [conn (oink/open db)]
-      (pp/pprint (oink/get-status conn)))
+    (with-open [svc (oink/open db)]
+      (pp/pprint (oink/get-status svc)))
     (log/error "no database directory specified")))
 
 (defn build-index [{:keys [db]}]
@@ -31,9 +32,9 @@
 
 (defn serve [{:keys [db _port _bind-address] :as params} _]
   (if db
-    (with-open [conn (oink/open db)]
+    (with-open [svc (oink/open db)]
       (log/info "starting terminology server " params)
-      #_(server/start-server svc params))
+      (server/start svc params))
     (log/error "no database directory specified")))
 
 (def cli-options
