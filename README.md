@@ -27,11 +27,61 @@ As a library, it provides a simple API in order to make use of LOINC data.
 `oink` provides a graph-like API designed to be composed with other graph data
 resolvers as well as simpler end-points.
 
+The easiest way to run `oink` is to [download clojure](https://clojure.org/guides/getting_started)
+and then clone this repository:
+
+```shell
+git clone https://github.com/wardle/oink
+cd oink
+```
+
 ## Command-line usage
+
+To create a LOINC database, download the [complete download file](https://loinc.org/download/loinc-and-relma-complete-download-file/) and unzip to a 
+directory.
+
+Once downloaded, simply run
+```shell
+clj -M:run import --db /var/data/oink-2021-06 /path/to/download
+```
+
+This will create a file-based database at 
+/var/data/oink-2021-06 based on the contents of the download. It takes
+about 6 minutes on my machine to import the data.
 
 ## Use as a microservice
 
+> *** This has not yet been implemented
+
+Simply run 
+
+```shell
+clj -M:run serve --db /var/data/oink-2021-06
+```
+
+## Use at the REPL
+
+I make very great use of REPL-driven development. This allows me to explore the
+LOINC distribution interactively while writing code. If you look at any `comment`
+block in the source code, you will see the artifacts of that development - 
+in general I write code in the editor and send those forms to a running 
+application; getting feedback immediately. It's a bit like writing a domain-specific
+language incrementally and iteratively.
+
+Most clojure users run the REPL from within an integrated development 
+environment such as emacs, vim, IntelliJ or Visual Studio Code. You can run 
+a REPL at a command line but this is much less common.
+
+To run a REPL at the command-line, just run:
+
+```shell
+clj
+```
+
 ## Use as a library
+
+Use a github coordinate in your deps.edn file, or use the pre-built jar
+file. 
 
 # Development
 
