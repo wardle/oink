@@ -22,6 +22,7 @@
                           ch.qos.logback/logback-classic {:mvn/version "1.2.3"}
                           io.pedestal/pedestal.service   {:mvn/version "0.5.9"}
                           io.pedestal/pedestal.jetty     {:mvn/version "0.5.9"}}
+            :jvm-opts ["--add-opens" "java.base/java.nio=ALL-UNNAMED"]
             :main-opts   ["-m" "com.eldrix.oink.cmd.core"]}
 
            :dev
