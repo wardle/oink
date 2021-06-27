@@ -26,6 +26,13 @@
    :org.loinc.part/PartNumber                  {:db/valueType :db.type/string}
    })
 
+
+(defn open [dir]
+  (d/create-conn dir schema))
+
+(defn close [conn]
+  (d/close conn))
+
 (defn import-batch
   [conn {:keys [type data] :as batch}]
   (let [tx-data (map #(reduce-kv
@@ -43,6 +50,15 @@
       (when (seq batch)
         (import-batch conn batch)
         (recur (async/<!! ch))))))
+
+(defn list-dir [dir]
+  (importer/list-files dir))
+
+(defn get-status [conn]
+  (log/info "not implemented"))
+;;
+;;
+;;
 
 (defn fetch-loinc
   "Returns data about the given LOINC code."
@@ -278,14 +294,19 @@
        (map #(loinc-part->snomed st %))
        (map :org.loinc.part.code-mapping/ExtCodeId))
 
+  ;; this gets all of the part display names of any elements
+  ;; in the multiaxial hierarchy for this loinc code.
   (->> (fetch-multiaxial-hierarchy st "21756-2")
        (map :org.loinc.multiaxial-hierarchy/PATH_TO_ROOT)
        (map #(clojure.string/split % #"\."))
        flatten
        set
        (map #(fetch-part st %))
-       (map :org.loinc.part/PartDisplayName)
-       sort)
+     ;  (map :org.loinc.part/PartDisplayName)
+       )
+
+  (loinc-part->snomed st "LP19786-0")
+
   (clojure.string/split
     (:org.loinc/RELATEDNAMES2 (fetch-loinc st "21756-2"))
     #"; ")
