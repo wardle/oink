@@ -34,7 +34,7 @@
   (if db
     (with-open [svc (oink/open db)]
       (log/info "starting terminology server " params)
-      (server/start svc params))
+      (server/start-server svc params))
     (log/error "no database directory specified")))
 
 (def cli-options

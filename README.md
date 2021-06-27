@@ -51,13 +51,25 @@ about 6 minutes on my machine to import the data.
 
 ## Use as a microservice
 
-> *** This has not yet been implemented
-
 Simply run 
 
 ```shell
 clj -M:run serve --db /var/data/oink-2021-06
 ```
+
+A server will start that provides a simple end-point. 
+
+This is a proof-of-concept at the moment, so the results will change.
+
+But, here is a sample usage:
+
+```shell
+http -j localhost:8080/v1/loinc/21756-2
+```
+
+Returns the LOINC data for that LOINC number (in this case, ATN1 gene repeats).
+
+
 
 ## Use at the REPL
 
@@ -71,6 +83,9 @@ language incrementally and iteratively.
 Most clojure users run the REPL from within an integrated development 
 environment such as emacs, vim, IntelliJ or Visual Studio Code. You can run 
 a REPL at a command line but this is much less common.
+
+It is straightforward to run a REPL from your development environment; simply
+consult the documentation (e.g. cider, cursive or calva).
 
 To run a REPL at the command-line, just run:
 

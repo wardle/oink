@@ -6,6 +6,7 @@
            org.clojure/data.xml             {:mvn/version "0.2.0-alpha6"}
            org.clojure/data.zip             {:mvn/version "1.0.0"}
            org.clojure/tools.logging        {:mvn/version "1.1.0"}
+           cheshire/cheshire                {:mvn/version "5.10.0"}
 
            com.wsscode/pathom               {:git/url "https://github.com/wilkerlucio/pathom3"
                                              :sha     "c7e16f558d50d023f51b3d73109ba62a304600de"}
@@ -20,13 +21,18 @@
            {:extra-paths ["cmd"]
             :extra-deps  {org.clojure/tools.cli          {:mvn/version "1.0.206"}
                           ch.qos.logback/logback-classic {:mvn/version "1.2.3"}
+                          cheshire/cheshire              {:mvn/version "5.10.0"}
                           io.pedestal/pedestal.service   {:mvn/version "0.5.9"}
                           io.pedestal/pedestal.jetty     {:mvn/version "0.5.9"}}
-            :jvm-opts ["--add-opens" "java.base/java.nio=ALL-UNNAMED"]
+            :jvm-opts    ["--add-opens" "java.base/java.nio=ALL-UNNAMED"]
             :main-opts   ["-m" "com.eldrix.oink.cmd.core"]}
 
            :dev
-           {:extra-deps {com.wsscode/pathom-viz-connector {:mvn/version "2021.06.13"}}}
+           {:extra-paths ["cmd"]
+            :extra-deps  {com.wsscode/pathom-viz-connector {:mvn/version "2021.06.13"}
+                          cheshire/cheshire                {:mvn/version "5.10.0"}
+                          io.pedestal/pedestal.service     {:mvn/version "0.5.9"}
+                          io.pedestal/pedestal.jetty       {:mvn/version "0.5.9"}}}
 
            :test
            {:extra-paths ["test" "test/resources"]
