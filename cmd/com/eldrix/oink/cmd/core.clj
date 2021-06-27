@@ -5,14 +5,16 @@
             [clojure.tools.cli :as cli]
             [clojure.tools.logging :as log]
             [com.eldrix.oink.cmd.server :as server]
-            [com.eldrix.oink.importer :as importer]
             [com.eldrix.oink.core :as oink]))
 
-(defn import-from [{:keys [db]} args]
+(defn create-from [{:keys [db]} args]
   (if db
-    (let [import-dir (if (= 0 (count args)) "." (first args))]
+    (let [dir (if (= 0 (count args))
+                       (do (log/info "no specified directory; using current directory")
+                           ".")
+                       (first args))]
       (with-open [svc (oink/open db)]
-        (oink/import-dir svc import-dir)))
+        (oink/import-dir svc dir)))
     (log/error "no database directory specified")))
 
 (defn list-from [_ args]
@@ -57,15 +59,15 @@
         options-summary
         ""
         "Commands:"
-        " import [path] Import LOINC distribution files from path specified."
+        " create [path] Import LOINC distribution files from path specified."
         " list [path]   List importable files from the paths specified."
-        " index          Build search index."
-        " serve          Start a terminology server"
-        " status         Displays status information"]
+        " index         Build search index."
+        " serve         Start a terminology server"
+        " status        Displays status information"]
        (str/join \newline)))
 
 (def commands
-  {"import" {:fn import-from}
+  {"create" {:fn create-from}
    "list"   {:fn list-from}
    "index"  {:fn build-index}
    "serve"  {:fn serve}
