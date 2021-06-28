@@ -24,7 +24,9 @@
                           cheshire/cheshire              {:mvn/version "5.10.0"}
                           io.pedestal/pedestal.service   {:mvn/version "0.5.9"}
                           io.pedestal/pedestal.jetty     {:mvn/version "0.5.9"}}
-            :jvm-opts    ["--add-opens" "java.base/java.nio=ALL-UNNAMED"]
+            :jvm-opts    ["--add-opens" "java.base/java.nio=ALL-UNNAMED"
+                          "--add-opens" "java.base/sun.nio.ch=ALL-UNNAMED"
+                          "--illegal-access=permit"]
             :main-opts   ["-m" "com.eldrix.oink.cmd.core"]}
 
            :dev
