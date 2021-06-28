@@ -1,9 +1,20 @@
 # oink
 
-A library and microservice for LOINC .
+A library and microservice for LOINC.
 
-> *Status* : in *very early* development; at the REPL can import and build a file-backed
-database and provide a rudimentary API for LOINC data.
+> *Status* : 
+>
+> `oink` is in *very early* development; at the REPL can import and build a file-backed
+> database and provide a rudimentary API for LOINC data.
+>
+> > Its principal use at the moment is exploratory - so that I can understand 
+> LOINC and the relationships between the main and accessory tables. 
+>
+> This means it is not yet intended as a working microservice. 
+> 
+> This is exploratory software development. 
+
+
 
 [![Scc Count Badge](https://sloc.xyz/github/wardle/oink)](https://github.com/wardle/oink/)
 [![Scc Cocomo Badge](https://sloc.xyz/github/wardle/oink?category=cocomo&avg-wage=100000)](https://github.com/wardle/oink/)
